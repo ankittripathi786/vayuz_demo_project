@@ -1,31 +1,35 @@
 // ignore_for_file: file_names, use_key_in_widget_constructors
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io' show HttpHeaders, Platform;
+import 'dart:io' show Platform;
 import 'dart:developer' as developer;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vayuz_demo_project/controllers/ImageController.dart';
-import 'package:vayuz_demo_project/views/ImageView.dart';
 
-import 'package:http/http.dart' as http;
-import '../resources/API.dart';
+
 import 'NoInternet.dart';
 
-class Dashboard extends StatefulWidget {
+class ImageView extends StatefulWidget {
+  String? image;
+  ImageView(image){
+   image=image;
+ }
   @override
-  _DashboardState createState() => _DashboardState();
+  _ImageViewState createState() => _ImageViewState(image);
 }
 
-class _DashboardState extends State<Dashboard> {
-
+class _ImageViewState extends State<ImageView> {
+String? image;
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
-
+ late Uri _uri;
+ _ImageViewState(image){
+   image=image;
+ }
  
 
   @override
@@ -35,6 +39,7 @@ class _DashboardState extends State<Dashboard> {
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
        updateScreen();
+       loadImage();
   }
 
   Future<void> updateScreen() async {
@@ -81,6 +86,11 @@ class _DashboardState extends State<Dashboard> {
       _connectionStatus = result;
     });
   }
+
+  void loadImage() async{
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    _uri = Uri.parse(prefs.getString("image_data")!);
+  }
    
   @override
   Widget build(BuildContext context) {
@@ -90,34 +100,9 @@ class _DashboardState extends State<Dashboard> {
       body: SafeArea(
         // ignore: avoid_unnecessary_containers
         child: Container(
-          child: Center(child: ElevatedButton(
-            style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
-            onPressed: () async {
-              // ImageController().fetchImage();
-
-                 final client = http.Client();
-    final response = await client.get(
-      Uri.parse(API.imageUrl),
-      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-    );
-
-    if(response.statusCode==200){
-      //print(json.decode(response.body));
-      var decodeddata = json.decode(response.body);
-      Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ImageView(decodeddata["message"])));
-    }
-    else{
-      Fluttertoast.showToast(
-              msg: "Something is Fissy in Calling Image from Network");
-    }
-              
-            },
-            child: const Text('Fetch API and Display Image'),
-          ),),
+          child: Center(child: Image.network(image!.replaceAll('"', '')))),
         ),
-      )
-    );
+      );
+    
   }
 }
