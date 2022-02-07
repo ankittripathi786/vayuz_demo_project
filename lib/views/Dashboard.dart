@@ -83,7 +83,10 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
           // appBar: AppBar(title: Text("Official InAppWebView website")),
       body: SafeArea(
-        child: Container(),
+        // ignore: avoid_unnecessary_containers
+        child: Container(
+          child: const Center(child: Text("Dashboard"))
+        ),
       )
     );
   }
