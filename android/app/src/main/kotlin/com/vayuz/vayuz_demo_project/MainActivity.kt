@@ -1,4 +1,4 @@
-package com.example.vayuz_demo_project
+package com.vayuz.vayuz_demo_project
 
 import io.flutter.embedding.android.FlutterActivity
 
