@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vayuz_demo_project/controllers/ImageController.dart';
+import 'package:http/http.dart' as http;
 
 
 import 'NoInternet.dart';
@@ -89,7 +90,8 @@ String? image;
 
   void loadImage() async{
      SharedPreferences prefs = await SharedPreferences.getInstance();
-    _uri = Uri.parse(prefs.getString("image_data")!);
+    image = prefs.getString("image_data")!;
+    print(image);
   }
    
   @override
@@ -100,9 +102,9 @@ String? image;
       body: SafeArea(
         // ignore: avoid_unnecessary_containers
         child: Container(
-          child: Center(child: Image.network(image!.replaceAll('"', '')))),
+          child: Center(child: Image.network(image.toString().replaceAll('"', ''))),
         ),
-      );
+      ));
     
   }
 }

@@ -97,8 +97,8 @@ class _DashboardState extends State<Dashboard> {
 
                  final client = http.Client();
     final response = await client.get(
-      Uri.parse(API.imageUrl),
-      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      Uri.parse(API.imageUrl)
+      //headers: {HttpHeaders.contentTypeHeader: 'application/json'},
     );
 
     if(response.statusCode==200){
